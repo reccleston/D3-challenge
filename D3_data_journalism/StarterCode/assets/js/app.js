@@ -5,8 +5,8 @@ var raw_data= d3.csv('assets/data/data.csv').then(row => {
     ));
     
     var trace = {
-        x: tranposed_data.age,
-        y: tranposed_data.income,
+        x: tranposed_data.poverty,
+        y: tranposed_data.healthcareLow,
         mode: 'markers',
         type: 'scatter'
       };
@@ -16,12 +16,12 @@ var raw_data= d3.csv('assets/data/data.csv').then(row => {
     
       // Define the plot layout
       var layout = {
-        title: "Age v. Income",
-        xaxis: { title: "Age" },
-        yaxis: { title: "Income"}
+        xaxis: { title: "poverty" },
+        yaxis: { title: "low healthcare"}
       };
     
-      // Plot the chart to a div tag with id "bar-plot"
+      // Plot the chart to a div tag with id 'scatter'
       Plotly.newPlot("scatter", data, layout);
+      console.log(tranposed_data);
 });
 
