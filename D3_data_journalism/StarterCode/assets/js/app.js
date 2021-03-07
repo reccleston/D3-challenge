@@ -22,6 +22,10 @@ var raw_data= d3.csv('assets/data/data.csv').then(row => {
     
       // Plot the chart to a div tag with id 'scatter'
       Plotly.newPlot("scatter", data, layout);
-      console.log(tranposed_data);
+      console.log('wow');
+      // Labeling points 
+      var svg = d3.select('.main-svg');
+      console.log('milk');
+      console.log(svg);
 });
 
