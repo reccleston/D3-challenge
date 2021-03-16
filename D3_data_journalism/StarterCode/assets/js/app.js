@@ -30,66 +30,79 @@ var svg = d3.select("#scatter")
   .attr("height", svgHeight);
 
 var chartGroup = svg.append("g")
-  .attr("transform", `translate(${margin.left}, ${margin.top})`);
+  .attr("transform", `translate(${margin.left}, ${margin.top})`)
+  .classed('chart-axes-pts', true);
+
+var textLayer = svg.append("g")
+  .attr("transform", `translate(${margin.left}, ${margin.top})`)
+  .classed('text-layer', true);
+
 
 var raw_data = d3.csv('assets/data/data.csv').then(data => {
   console.log(data);
+
+  // Casting Relevant values
   data.forEach(d => {
     d.poverty = +d.poverty,
     d.healthcareLow = +d.healthcareLow;
   });
 
-var xLinearScale = d3.scaleLinear()
-  .domain(d3.extent(data, d => d.poverty))
-  .range([0, width]);
+  // Scaling
+  var xLinearScale = d3.scaleLinear()
+    .domain(d3.extent(data, d => d.poverty))
+    .range([0, width]);
 
-var yLinearScale = d3.scaleLinear()
-  .domain([0, d3.max(data, d => d.healthcareLow)])
-  .range([height, 0]);
+  var yLinearScale = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d.healthcareLow)])
+    .range([height, 0]);
 
-var xAxis = d3.axisBottom(xLinearScale);
-var yAxis = d3.axisLeft(yLinearScale);
+  // Axes
+  var xAxis = d3.axisBottom(xLinearScale);
+  var yAxis = d3.axisLeft(yLinearScale);
 
-chartGroup.append("g")
-  .attr("transform", `translate(0, ${height})`)
-  .call(xAxis);
+  chartGroup.append("g")
+    .attr("transform", `translate(0, ${height})`)
+    .call(xAxis);
 
-chartGroup.append("g").call(yAxis);
+  chartGroup.append("g")
+    .call(yAxis);
 
-// points 
-var circles  = chartGroup.selectAll("circle")
-.data(data)
-.enter()
-.append("circle")
-.attr("r", d => 2.5 * (d.income / 11500))
-.attr("cx", d => xLinearScale(d.poverty))
-.attr("cy", d => yLinearScale(d.healthcareLow))
-.attr('value', d => d.abbr)
-.classed('pt', true);
+  // points 
+  var circles  = chartGroup.selectAll("circle")
+  .data(data)
+  .enter()
+  .append("circle")
+  .attr("r", 12)
+  .attr("cx", d => xLinearScale(d.poverty))
+  .attr("cy", d => yLinearScale(d.healthcareLow))
+  .attr('value', d => d.abbr)
+  .classed('pt', true);
 
-// point labels
-chartGroup.selectAll('text')
-.data(data).enter()
-.append("text")
-.attr("dx", d => xLinearScale(d.poverty) - 11)
-.attr('dy', d => yLinearScale(d.healthcareLow) + 6)
-.attr('value', d => d.abbr)
-.text(d => d.abbr)
-.classed('pt-label', true)
+  // point labels
+  textLayer.selectAll('text')
+  .data(data)
+  .enter()
+  .append("text")
+  .attr("dx", d => xLinearScale(d.poverty))
+  .attr('dy', d => yLinearScale(d.healthcareLow) + 4)
+  .attr('text-anchor', 'middle')
+  .attr('value', d => d.asbbr)
+  .text(d => d.abbr)
+  .classed('pt-label', true)
 
-// Axes
-chartGroup.append("text")
-.attr("transform", "rotate(-90)")
-.attr("y", 0 - margin.left + 40)
-.attr("x", 0 - (height / 2))
-.attr("dy", "1em")
-.attr("class", "axisText")
-.text('healthcare low');
+  // data.forEach(d => console.log(d.abbr));
 
-chartGroup.append("text")
-.attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
-.attr("class", "axisText")
-.text("poverty");
+  // Axes
+  chartGroup.append("text")
+  .attr("transform", "rotate(-90)")
+  .attr("y", 0 - margin.left + 40)
+  .attr("x", 0 - (height / 2))
+  .attr("dy", "1em")
+  .text('healthcare low');
+
+  chartGroup.append("text")
+  .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
+  .text("poverty");
 
 }).catch(function(error) {
   console.log(error);
