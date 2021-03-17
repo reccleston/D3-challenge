@@ -37,3 +37,7 @@ body {
 .pt {
   fill: lightseagreen;
 }
+
+.axis-relation {
+  padding: 10px;
+}

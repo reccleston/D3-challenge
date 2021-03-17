@@ -1,11 +1,12 @@
-var svgWidth = 960;
+var svgWidth = 1000;
 var svgHeight = 500;
 
 var margin = {
   top: 20,
   right: 40,
   bottom: 60,
-  left: 40
+  left: 40,
+  text: 15
 };
 
 var width = svgWidth - margin.left - margin.right;
@@ -27,15 +28,25 @@ function castVals(tranposed_data) {
 var svg = d3.select("#scatter")
   .append("svg")
   .attr("width", svgWidth)
-  .attr("height", svgHeight);
+  .attr("height", svgHeight)
+  .attr('transform', `translate(-60, 0)`)
 
 var chartGroup = svg.append("g")
-  .attr("transform", `translate(${margin.left}, ${margin.top})`)
+  .attr("transform", `translate(${margin.left + 40}, ${margin.top})`)
   .classed('chart-axes-pts', true);
 
 var textLayer = svg.append("g")
-  .attr("transform", `translate(${margin.left}, ${margin.top})`)
+  .attr("transform", `translate(${margin.left + 40}, ${margin.top})`)
   .classed('text-layer', true);
+
+var axesRelationsX = svg.append('g')
+  .attr("y", 0 - margin.left + 40)
+  .attr("x", 0 - (height / 2))
+  .classed('x-relations', true);
+
+var axesRelationsY = svg.append('g')
+  .attr("transform", `translate(${margin.left}, ${margin.top})`)
+  .classed('y-relations', true)
 
 
 var raw_data = d3.csv('assets/data/data.csv').then(data => {
@@ -92,18 +103,39 @@ var raw_data = d3.csv('assets/data/data.csv').then(data => {
 
   // data.forEach(d => console.log(d.abbr));
 
-  // Axes
-  chartGroup.append("text")
-  .attr("transform", "rotate(-90)")
-  .attr("y", 0 - margin.left + 40)
-  .attr("x", 0 - (height / 2))
-  .attr("dy", "1em")
-  .text('healthcare low');
+  // equaly space relation options alongside axes 
+  var x_realtions = ['poverty', 'age', 'income'];
+  var y_relations = ['obese', 'smokes','lacks healthcare'];
 
-  chartGroup.append("text")
-  .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
-  .text("poverty");
+  // Axes
+  // Y
+  y_relations.forEach((rel, i) => {
+    axesRelationsY.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left + 40 - (margin.text * i))
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .text(rel)
+    .classed('axis-relation', true);
+  });
+
+
+  // X
+  x_realtions.forEach((rel, i) => {
+    axesRelationsX.append('text')
+    .attr('transform', `translate(${width / 2}, ${height + margin.top + 30 + (margin.text * i)})`)
+    .text(rel)
+    .classed('axis-relation', true);
+  });
+  
 
 }).catch(function(error) {
   console.log(error);
 });
+
+// x_realtions.forEach((rel, i) => {
+//   axesRelationsX.append('text')
+//   .attr('transform', `translate(${width / 2}, ${height + margin.top + 30 + i})`)
+//   .text(rel)
+//   .classed('axis-relation', true);
+// });
