@@ -39,5 +39,17 @@ body {
 }
 
 .axis-relation {
-  padding: 10px;
+  font-weight: bold;
 }
+
+.tooltip {
+  position: absolute;
+  padding: 10px;
+  font: 12px sans-serif;
+  text-align: center;
+  color: black;
+  background: lightpink;
+  border: 0;
+  border-radius: 10px;
+}
+

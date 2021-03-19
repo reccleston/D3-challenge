@@ -27,7 +27,7 @@ function castVals(tranposed_data) {
 // Create an SVG wrapper, append an SVG group that will hold our chart, and shift the latter by left and top margins.
 var svg = d3.select("#scatter")
   .append("svg")
-  .attr("width", svgWidth)
+  .attr("width", 1200) // altering the variable produced strange behavior 
   .attr("height", svgHeight)
   .attr('transform', `translate(-60, 0)`)
 
@@ -41,11 +41,12 @@ var textLayer = svg.append("g")
 
 var axesRelationsX = svg.append('g')
   .attr("y", 0 - margin.left + 40)
-  .attr("x", 0 - (height / 2))
+  .attr("x", 0 - (width / 2))
+  .attr("transform", 'translate(0, 20)')
   .classed('x-relations', true);
 
 var axesRelationsY = svg.append('g')
-  .attr("transform", `translate(${margin.left}, ${margin.top})`)
+  .attr("transform", `translate(${margin.left / 2}, ${margin.top})`)
   .classed('y-relations', true)
 
 
@@ -78,6 +79,8 @@ var raw_data = d3.csv('assets/data/data.csv').then(data => {
   chartGroup.append("g")
     .call(yAxis);
 
+  console.log(xLinearScale(data.poverty));
+
   // points 
   var circles  = chartGroup.selectAll("circle")
   .data(data)
@@ -104,8 +107,8 @@ var raw_data = d3.csv('assets/data/data.csv').then(data => {
   // data.forEach(d => console.log(d.abbr));
 
   // equaly space relation options alongside axes 
-  var x_realtions = ['poverty', 'age', 'income'];
-  var y_relations = ['obese', 'smokes','lacks healthcare'];
+  var x_realtions = ['In Poverty (%)'];
+  var y_relations = ['Lacks Healthcare (%)'];
 
   // Axes
   // Y
@@ -128,6 +131,28 @@ var raw_data = d3.csv('assets/data/data.csv').then(data => {
     .classed('axis-relation', true);
   });
   
+  var toolTip = d3.tip()
+    .attr("class", "tooltip")
+    .offset([80, -60])
+    .html(function(d) {
+      return (`<strong>${d.state}<strong>
+      <hr>
+      <h4>Obese</h4>
+      <h3>${d.obesity}%</h3>
+      <hr>
+      <h4>Smokes</h4>
+      <h3>${d.smokes}%</h3>`);
+  });
+
+  chartGroup.call(toolTip);
+
+  circles
+  .on("mouseover", function(d) {
+    toolTip.show(d, this);
+  })
+  .on("mouseout", function(d) {
+    toolTip.hide(d);
+  });
 
 }).catch(function(error) {
   console.log(error);
