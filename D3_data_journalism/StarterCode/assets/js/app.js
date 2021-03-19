@@ -12,7 +12,6 @@ var margin = {
 var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
-
 function castVals(tranposed_data) {
   Object.keys(tranposed_data).forEach(key => {
     // Checks if value is a string 
@@ -24,13 +23,14 @@ function castVals(tranposed_data) {
   return tranposed_data;
 };
 
-// Create an SVG wrapper, append an SVG group that will hold our chart, and shift the latter by left and top margins.
+// Containers
 var svg = d3.select("#scatter")
   .append("svg")
   .attr("width", 1200) // altering the variable produced strange behavior 
   .attr("height", svgHeight)
   .attr('transform', `translate(-60, 0)`)
 
+// Chart components 
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left + 40}, ${margin.top})`)
   .classed('chart-axes-pts', true);
@@ -59,7 +59,7 @@ var raw_data = d3.csv('assets/data/data.csv').then(data => {
     d.healthcareLow = +d.healthcareLow;
   });
 
-  // Scaling
+  // Axes scaling
   var xLinearScale = d3.scaleLinear()
     .domain(d3.extent(data, d => d.poverty))
     .range([0, width]);
@@ -81,7 +81,7 @@ var raw_data = d3.csv('assets/data/data.csv').then(data => {
 
   console.log(xLinearScale(data.poverty));
 
-  // points 
+  // Points 
   var circles  = chartGroup.selectAll("circle")
   .data(data)
   .enter()
@@ -92,7 +92,7 @@ var raw_data = d3.csv('assets/data/data.csv').then(data => {
   .attr('value', d => d.abbr)
   .classed('pt', true);
 
-  // point labels
+  // Point labels
   textLayer.selectAll('text')
   .data(data)
   .enter()
@@ -104,13 +104,11 @@ var raw_data = d3.csv('assets/data/data.csv').then(data => {
   .text(d => d.abbr)
   .classed('pt-label', true)
 
-  // data.forEach(d => console.log(d.abbr));
-
-  // equaly space relation options alongside axes 
+  // Features to plot
   var x_realtions = ['In Poverty (%)'];
   var y_relations = ['Lacks Healthcare (%)'];
 
-  // Axes
+  // Axes labels 
   // Y
   y_relations.forEach((rel, i) => {
     axesRelationsY.append("text")
@@ -122,7 +120,6 @@ var raw_data = d3.csv('assets/data/data.csv').then(data => {
     .classed('axis-relation', true);
   });
 
-
   // X
   x_realtions.forEach((rel, i) => {
     axesRelationsX.append('text')
@@ -131,6 +128,7 @@ var raw_data = d3.csv('assets/data/data.csv').then(data => {
     .classed('axis-relation', true);
   });
   
+  // Tooltips 
   var toolTip = d3.tip()
     .attr("class", "tooltip")
     .offset([80, -60])
@@ -157,10 +155,3 @@ var raw_data = d3.csv('assets/data/data.csv').then(data => {
 }).catch(function(error) {
   console.log(error);
 });
-
-// x_realtions.forEach((rel, i) => {
-//   axesRelationsX.append('text')
-//   .attr('transform', `translate(${width / 2}, ${height + margin.top + 30 + i})`)
-//   .text(rel)
-//   .classed('axis-relation', true);
-// });
